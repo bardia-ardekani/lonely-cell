@@ -14,7 +14,7 @@ void insertCellPlayer1(struct player1 * head , int size , char map[size][size]);
 struct player1 * createNode(char name[] , int x , int y , int energy);
 void insert(struct player1 **head ,struct player1 * createNode);
 struct player1 * deleteNode(struct player1 ** head , int x , int y);
-void printList(struct player1 ** head);
+void printList(struct player1 ** head , int size);
 void SetColorAndBackground(int ForgC, int BackC);
 void gotoxy(int x, int y);
 int oddEven(int number);
@@ -314,7 +314,7 @@ struct player1 * deleteNode(struct player1 ** head , int x , int y)
     return *head;
 }
 
-void printList(struct player1 ** head)
+void printList(struct player1 ** head , int size)
 {
     struct player1 * curr = *head;
     int i = 1;
@@ -325,7 +325,7 @@ void printList(struct player1 ** head)
     }
     while(curr != NULL)
     {
-        printf("\n[%d] %s (%d , %d) energy = %d", i , curr->cellName , curr->x , curr->y , curr->energy);
+        printf("\n[%d] %s (%d , %d) energy = %d", i , curr->cellName , curr->y , size - curr->x - 1 , curr->energy);
         curr = curr->next;
         i++;
 
@@ -695,7 +695,7 @@ struct player1 * load(struct player1 *head , int size , int flag[size][size] , c
         if(feof(save)) break;
         fscanf(save , "%s %d %d %d\n" , name , &x , &y , &energy);
         insert(&head , createNode(name , x , y , energy));
-        printList(&head);
+        printList(&head , n);
     }
     printf("hey");
     for(int i = 0 ; i < size ; i++)
