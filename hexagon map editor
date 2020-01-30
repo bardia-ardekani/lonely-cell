@@ -1,0 +1,184 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <windows.h>
+#include <time.h>
+
+void SetColorAndBackground(int ForgC, int BackC);
+void printMap(int size , char arr[size][size]);
+void gotoxy(int x, int y);
+int oddEven(int number);
+void mapEditorNormal(int size , char map[size][size]);
+void mapBuilder(int size , char map[size][size]);
+
+int main()
+{
+    FILE *fptr;
+    int n , a;
+    printf("Enter the value of n : ");
+    scanf("%d" , &n);
+
+    char map[n][n];
+    printf("1)randomize the map\n2)build your own map\nchoose one option : ");
+    scanf("%d" , &a);
+
+    switch (a)
+    {
+    case 1:
+        mapEditorNormal(n , map);
+        break;
+    case 2:
+        mapBuilder(n , map);
+        break;
+    }
+
+    fptr = fopen("map" , "wb");
+    if(fptr == NULL)
+    {
+        printf("ERROR!");
+        exit(-1);
+    }
+
+    fwrite(&n , sizeof(int) , 1 , fptr);
+    for(int i = 0 ; i < n ; i++)
+     {
+        for(int j = 0 ; j < n ; j++)
+        {
+            char num = map[i][j];
+            fwrite(&num , sizeof(char) , 1 , fptr);
+        }
+     }
+    getchar();
+    system("CLS");
+
+    printMap(n , map);
+    getchar();
+    fclose(fptr);
+
+    return 0;
+}
+
+void SetColorAndBackground(int ForgC, int BackC)
+{
+     WORD wColor = ((BackC & 0x0F) << 4) + (ForgC & 0x0F);;
+     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), wColor);
+     return;
+}
+
+void gotoxy(int x, int y)
+{
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+
+int oddEven(int number)
+{
+    if(number % 2 == 0) return 0;
+    else return 2;
+}
+
+void printMap(int size , char arr[size][size])
+{
+     /// 1) Energy = yellow
+     /// 2) Mitosis = purple
+     /// 3) forbidden = white
+     /// 4) normal = blue
+     int xCoor , yCoor , step;
+     for(int i = 0 ; i < size ; i++)
+     {
+        for(int j = 0 ; j < size ; j++)
+        {
+            step = oddEven(j);
+            xCoor = 5*j;
+            yCoor = 3*i + step;
+            switch (arr[i][j])
+            {
+            case 49:
+                SetColorAndBackground(6,0);
+                gotoxy(xCoor , yCoor);
+                break;
+            case 50:
+                SetColorAndBackground(5,0);
+                gotoxy(xCoor , yCoor);
+                break;
+            case 51:
+                SetColorAndBackground(4,0);
+                gotoxy(xCoor , yCoor);
+                break;
+            case 52:
+                SetColorAndBackground(3,0);
+                gotoxy(xCoor , yCoor);
+                break;
+            }
+            gotoxy(xCoor , yCoor);
+            printf(" ___ ");
+            gotoxy(xCoor , yCoor + 1);
+            printf("/   \\");
+            gotoxy(xCoor, yCoor + 2);
+            printf("\\___/");
+
+            SetColorAndBackground(7,0); ///change back color to normal
+        }
+        printf("\n");
+
+     }
+}
+
+void mapEditorNormal(int size , char map[size][size])
+{
+    int randome;
+    srand(time(0));
+    for(int i = 0 ; i < size ; i++)
+     {
+        for(int j = 0 ; j < size ; j++)
+        {
+            randome = rand() % 4 + 1;
+            switch (randome)
+            {
+            case 1:
+                map[i][j] = '1';
+                break;
+            case 2:
+                map[i][j] = '2';
+                break;
+            case 3:
+                map[i][j] = '3';
+                break;
+            case 4:
+                map[i][j] = '4';
+                break;
+            }
+        }
+     }
+}
+
+void mapBuilder(int size , char map[size][size])
+{
+    int number;
+    printf("1) Energy = yellow\n2) Mitosis = purple\n3) forbidden = white\n4) normal = blue\n");
+    printf("init the map : \n");
+    for(int i = 0 ; i < size ; i++)
+     {
+        for(int j = 0 ; j < size ; j++)
+        {
+            printf("location x:%d , y:%d is : " , i , j);
+            scanf("%d" , &number);
+            switch (number)
+            {
+            case 1:
+                map[i][j] = '1';
+                break;
+            case 2:
+                map[i][j] = '2';
+                break;
+            case 3:
+                map[i][j] = '3';
+                break;
+            case 4:
+                map[i][j] = '4';
+                break;
+            }
+        }
+     }
+}
